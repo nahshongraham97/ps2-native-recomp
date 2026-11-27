@@ -38,6 +38,8 @@ struct RetailSsfGeometryFrame {
     RetailRendererAffine modelling{};
     std::int32_t parent{-1};
     std::uint32_t flags{};
+    std::optional<std::uint32_t> hanim_node_id{};
+    std::optional<std::uint32_t> hanim_flags{};
 };
 struct RetailSsfGeometryVertex {
     RetailRendererPoint3 position{}, normal{};
@@ -58,6 +60,8 @@ struct RetailSsfGeometryMaterial {
     // Authenticated 2136D0 version-5 serialization. Retained without assigning
     // an unproved blend/effect interpretation to these source fields.
     std::array<std::uint32_t, 7> plugin_words{};
+    std::array<float, 4> material_ext_vec4{};
+    bool has_material_ext_vec4{};
 };
 struct RetailSsfGeometryData {
     std::size_t atomic_index{}, geometry_index{}, frame_index{}, morph_index{}, morph_count{};

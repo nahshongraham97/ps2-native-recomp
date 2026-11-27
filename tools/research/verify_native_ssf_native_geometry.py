@@ -65,15 +65,15 @@ def parse_census(stdout: str) -> dict[str, int]:
     raise RuntimeError("Missing SSF_NATIVE_CENSUS line in test output")
 
 
-def parse_gpu_pixels(stdout: str) -> dict[str, int]:
+def parse_gpu_pixels(stdout: str, prefix: str = "ARMORY_GPU_PIXELS ") -> dict[str, int]:
     for line in stdout.splitlines():
-        if line.startswith("ARMORY_GPU_PIXELS "):
+        if line.startswith(prefix):
             out = {}
             for tok in line.split()[1:]:
                 k, v = tok.split("=")
                 out[k] = int(v)
             return out
-    raise RuntimeError("Missing ARMORY_GPU_PIXELS line in test output")
+    raise RuntimeError(f"Missing {prefix}line in test output")
 
 
 def build_and_run_falsification(env: dict[str, str]) -> tuple[list[dict], dict[str, str]]:
@@ -173,6 +173,34 @@ def build_and_run_falsification(env: dict[str, str]) -> tuple[list[dict], dict[s
             ROOT / "runtime" / "src" / "native" / "retail_first_scene_continuations.cpp",
             "record_placeholder_hit(1, \"continue_scene_reset_at_125d60\", main.iteration);",
             "record_placeholder_hit(1, \"continue_scene_reset_at_125d60\", main.iteration); return true; // planted defect: leak GL/ownership on 125D60",
+            True,
+        ),
+        (
+            "skip_0x80000005_vec4_reads",
+            ROOT / "runtime" / "src" / "native" / "retail_ssf_geometry.cpp",
+            "for(unsigned i=0;i<4;++i)result.material_ext_vec4[i]=scalar(ext[0].begin+28+i*4);",
+            "for(unsigned i=0;i<4;++i)result.material_ext_vec4[i]=0.0f; // planted defect: skip 0x80000005 vec4",
+            True,
+        ),
+        (
+            "corrupt_hanim_node_id",
+            ROOT / "runtime" / "src" / "native" / "retail_ssf_geometry.cpp",
+            "frame.hanim_node_id=r.word(fext[0].begin+4);",
+            "frame.hanim_node_id=0u; // planted defect: corrupt HAnim node id",
+            True,
+        ),
+        (
+            "reject_0x6d_unpack_descriptor",
+            ROOT / "runtime" / "src" / "native" / "retail_ssf_geometry.cpp",
+            "} else if(vnvl==0x6du&&usn==1&&addr==0x002u&&cl==1u) {",
+            "} else if(false) { // planted defect: reject 0x6d V4_16",
+            True,
+        ),
+        (
+            "skip_extra_atomic_composition",
+            ROOT / "runtime" / "src" / "native" / "retail_scene_archive.cpp",
+            "result.extra_geometries.push_back(std::move(*extra_geom));",
+            "// planted defect: drop extra_geometries",
             True,
         ),
     ]
@@ -295,7 +323,8 @@ def main() -> int:
         return 1
 
     census = parse_census(clean_proc.stdout)
-    gpu_pixels = parse_gpu_pixels(clean_proc.stdout)
+    gpu_pixels = parse_gpu_pixels(clean_proc.stdout, "ARMORY_GPU_PIXELS ")
+    multi_gpu_pixels = parse_gpu_pixels(clean_proc.stdout, "ARMORY_MULTI_GPU_PIXELS ")
     falsification, receipts = build_and_run_falsification(env)
 
     report = {
@@ -309,6 +338,7 @@ def main() -> int:
                 "3.0.1b210-060308 (-O3, -O4)",
             ],
             "private_work_dir": "/opt/mkar-decomp/native-geom-match",
+            "material_atomic_work_dir": "/opt/mkar-decomp/mat-ext-match",
             "exact_matches": {
                 "001CF000": {"bytes": 8, "sha256": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061", "diff_words": 0},
                 "001CF010": {"bytes": 8, "sha256": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061", "diff_words": 0},
@@ -318,6 +348,10 @@ def main() -> int:
                 "001CEFF0": {"bytes": 12, "sha256": "3f969139118634c7fd9b3ea32bbb84ff9ad18117b16c4176d90369cd1d97b98a"},
                 "001D1810": {"bytes": 176, "sha256": "9e8dece63b3afc1cf9c490d94a789f0de562949d2c166f1d2cc448562bf5fd27"},
                 "001D18C0": {"bytes": 688, "sha256": "18de13bbb1676bd1a1bbe9239cff5e61ea680df0441b18f5e7876e44cafc69d7"},
+                "00213630": {"bytes": 152, "sha256": "2aa335b66de3404f0160c954460caf0e91917517293887b08ff8541b91b67066"},
+                "002136D0": {"bytes": 680, "sha256": "8c0745b82d7215607b142d0576f3b72903627ada22921e122dce44b5e417574a"},
+                "00213D60": {"bytes": 152, "sha256": "e98f240352b35b627656064f3dfa3dee828a0c12fc02d1bcf5e88c6784b65516"},
+                "00213E00": {"bytes": 200, "sha256": "c4b3b60f4a1e3618553f8a8747789dd97ae6b50920607ca64fca0a8226233396"},
             },
             "intentional_native_safety_divergences": [
                 "64-bit-safe std::size_t bounds/cursor arithmetic (bounded_chunk_end, checked QWC and UNPACK payload lengths) prevents 32-bit length/offset wrap.",
@@ -330,15 +364,32 @@ def main() -> int:
         "strict_native_contract": "PASS",
         "runtime_file_sha256": hashes,
         "build_receipts": receipts,
+        "mkda_pak_census_baseline_v1": {
+            "total_clumps": 3774,
+            "non_native_clumps": 2,
+            "native_clumps": 260,
+            "decoded_ok": 192,
+            "refused_skinned": 0,
+            "refused_unpack": 67,
+            "refused_vif": 1,
+            "refused_other": 3512,
+        },
         "mkda_pak_census": census,
         "armory_gpu_test": {
             "exit_code": clean_proc.returncode,
             "policy": "diagnostic_native_vif_unlit_raw_rgba8",
             **gpu_pixels,
         },
+        "armory_multi_gpu_test": {
+            "exit_code": clean_proc.returncode,
+            "policy": "diagnostic_native_vif_unlit_raw_rgba8",
+            "atomics": [18, 69, 72],
+            "texture_records": [32, 41, 49],
+            **multi_gpu_pixels,
+        },
         "falsification": falsification,
     }
-    out_path = ROOT / "research" / "runs" / "native-ssf-native-geometry-20261127.json"
+    out_path = ROOT / "research" / "runs" / "native-ssf-native-geometry-v2-20261127.json"
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"PASS: strict native contract + census + Armory GPU + {len(falsification)}/{len(falsification)} planted defects rejected")
     return 0

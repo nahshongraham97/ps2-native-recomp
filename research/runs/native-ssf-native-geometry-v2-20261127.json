@@ -1,0 +1,205 @@
+{
+  "slice": "ps2_rpgeometrynative_vif_dma_unpacking_and_armory_gpu",
+  "retail_matching": {
+    "elf": "research/inputs/SLUS_214.10",
+    "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "compilers": [
+      "3.0.1b198-051011 (-O3, -O4)",
+      "3.0.1b205-051227 (-O3, -O4)",
+      "3.0.1b210-060308 (-O3, -O4)"
+    ],
+    "private_work_dir": "/opt/mkar-decomp/native-geom-match",
+    "material_atomic_work_dir": "/opt/mkar-decomp/mat-ext-match",
+    "exact_matches": {
+      "001CF000": {
+        "bytes": 8,
+        "sha256": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061",
+        "diff_words": 0
+      },
+      "001CF010": {
+        "bytes": 8,
+        "sha256": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061",
+        "diff_words": 0
+      }
+    },
+    "disassembly_verified": {
+      "001CEFB0": {
+        "bytes": 52,
+        "sha256": "75b224beb294918afa9bd1c084da97992107e672506281483e7af7ce955e3210"
+      },
+      "001CEFF0": {
+        "bytes": 12,
+        "sha256": "3f969139118634c7fd9b3ea32bbb84ff9ad18117b16c4176d90369cd1d97b98a"
+      },
+      "001D1810": {
+        "bytes": 176,
+        "sha256": "9e8dece63b3afc1cf9c490d94a789f0de562949d2c166f1d2cc448562bf5fd27"
+      },
+      "001D18C0": {
+        "bytes": 688,
+        "sha256": "18de13bbb1676bd1a1bbe9239cff5e61ea680df0441b18f5e7876e44cafc69d7"
+      },
+      "00213630": {
+        "bytes": 152,
+        "sha256": "2aa335b66de3404f0160c954460caf0e91917517293887b08ff8541b91b67066"
+      },
+      "002136D0": {
+        "bytes": 680,
+        "sha256": "8c0745b82d7215607b142d0576f3b72903627ada22921e122dce44b5e417574a"
+      },
+      "00213D60": {
+        "bytes": 152,
+        "sha256": "e98f240352b35b627656064f3dfa3dee828a0c12fc02d1bcf5e88c6784b65516"
+      },
+      "00213E00": {
+        "bytes": 200,
+        "sha256": "c4b3b60f4a1e3618553f8a8747789dd97ae6b50920607ca64fca0a8226233396"
+      }
+    },
+    "intentional_native_safety_divergences": [
+      "64-bit-safe std::size_t bounds/cursor arithmetic (bounded_chunk_end, checked QWC and UNPACK payload lengths) prevents 32-bit length/offset wrap.",
+      "Strict VIF opcode, DMA tag ID, and UNPACK (vn/vl/usn/addr) validation fails closed with explicit named RetailSsfGeometryError values.",
+      "Skinned native pipes (trailing RpSkin data) and unsupported UNPACK formats/opcodes are explicitly refused rather than silently skipped.",
+      "RetailSceneResources ownership-journal rollback and 125D60 teardown release all rasters, textures, materials, frames, world objects, and GL handles on failure or reset.",
+      "Armory GPU rendering uses explicit RetailSsfSceneRenderPolicy::diagnostic_native_vif_unlit_raw_rgba8 (unlit raw RGBA8 diagnostic preview, distinct from retail PS2 material/effect equivalence)."
+    ]
+  },
+  "strict_native_contract": "PASS",
+  "runtime_file_sha256": {
+    "runtime/include/mka/retail_ssf_geometry.hpp": "56225a96daa1e2c3e574e3bad03d20ddeeccbb823052f8c31b0ae0325a8a7ac5",
+    "runtime/src/native/retail_ssf_geometry.cpp": "dd722bd13754b10c32b0df137b3fa4f6e7bba8b354cec753917e5fa15587f693",
+    "runtime/include/mka/retail_scene_archive.hpp": "c685bf69c56ec546c419700a24b1b524e26e5e8bda09a284ae525aef70ae7a7f",
+    "runtime/src/native/retail_scene_archive.cpp": "8f2d7896a0da68822055531a7d670a1c783070e2a90ab30015e2a18da29feb53",
+    "runtime/src/native/retail_first_scene_continuations.cpp": "5be96504fdbe19e9204cbc68802aacd13d52060d9ce98fbbbfd1af20b6305d46"
+  },
+  "build_receipts": {
+    "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+    "fixture_source_sha256": "d6e071b4e6bd2d8cf698d290ad5344a7aa055e933109dc0b6d224555ba41bb9c",
+    "fixture_object_sha256": "1a63c563d25e7c2e6f03d68f17b57346a990eca9ac985206606a08d8b61d0a45"
+  },
+  "mkda_pak_census_baseline_v1": {
+    "total_clumps": 3774,
+    "non_native_clumps": 2,
+    "native_clumps": 260,
+    "decoded_ok": 192,
+    "refused_skinned": 0,
+    "refused_unpack": 67,
+    "refused_vif": 1,
+    "refused_other": 3512
+  },
+  "mkda_pak_census": {
+    "total_clumps": 3774,
+    "non_native_clumps": 2,
+    "native_clumps": 235,
+    "decoded_ok": 194,
+    "refused_skinned": 0,
+    "refused_unpack": 40,
+    "refused_vif": 1,
+    "refused_other": 3537
+  },
+  "armory_gpu_test": {
+    "exit_code": 0,
+    "policy": "diagnostic_native_vif_unlit_raw_rgba8",
+    "drawn": 903,
+    "verts": 66,
+    "tris": 22,
+    "adc_breaks": 40
+  },
+  "armory_multi_gpu_test": {
+    "exit_code": 0,
+    "policy": "diagnostic_native_vif_unlit_raw_rgba8",
+    "atomics": [
+      18,
+      69,
+      72
+    ],
+    "texture_records": [
+      32,
+      41,
+      49
+    ],
+    "drawn": 350,
+    "textures": 3,
+    "scene_objects": 6
+  },
+  "falsification": [
+    {
+      "defect": "bypass_vif_packet_bounds",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "bypass_dma_qwc_bounds",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "ignore_adc_strip_break",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "corrupt_unpack_position_stride",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "skip_native_binmesh_material_map",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "allow_u32_chunk_cursor_wrap",
+      "target": "runtime/include/mka/retail_ssf_geometry.hpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "accept_unknown_vif_opcode_silently",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "accept_unknown_unpack_format_silently",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "leak_scene_gl_resources_on_125d60",
+      "target": "runtime/src/native/retail_first_scene_continuations.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "skip_0x80000005_vec4_reads",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "corrupt_hanim_node_id",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "reject_0x6d_unpack_descriptor",
+      "target": "runtime/src/native/retail_ssf_geometry.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "skip_extra_atomic_composition",
+      "target": "runtime/src/native/retail_scene_archive.cpp",
+      "exit_code": 1,
+      "rejected": true
+    }
+  ]
+}

@@ -199,6 +199,13 @@ std::optional<RetailDecodedSsfScene> decode_retail_ssf_scene_from_archive(
             {config.atomic_index,config.morph_index,std::uint64_t(clump->resource().record().payload_offset)+8},failure.geometry);
         if(!geometry){failure.kind=RetailSceneArchiveError::ssf_geometry;failure.operation=failure.geometry.operation;return {};}
         RetailDecodedSsfScene result;result.geometry=std::move(*geometry);result.serialized_resource_bytes=clump->resource().bytes().size();
+        result.extra_geometries.reserve(config.extra_atomic_indices.size());
+        for(const auto extra_idx:config.extra_atomic_indices) {
+            auto extra_geom=decode_retail_ssf_geometry(clump->rw_bytes(),
+                {extra_idx,config.morph_index,std::uint64_t(clump->resource().record().payload_offset)+8},failure.geometry);
+            if(!extra_geom){failure.kind=RetailSceneArchiveError::ssf_geometry;failure.operation=failure.geometry.operation;return {};}
+            result.extra_geometries.push_back(std::move(*extra_geom));
+        }
         result.textures.reserve(config.texture_resource_indices.size());
         for(std::size_t selected=0;selected<config.texture_resource_indices.size();++selected) {
             const auto ordinal=config.texture_resource_indices[selected];const auto allowed=clump->texture_records();
@@ -220,13 +227,24 @@ std::optional<RetailDecodedSsfScene> decode_retail_ssf_scene_from_archive(
             }
             result.serialized_resource_bytes+=resource->bytes().size();result.textures.push_back(std::move(*texture));
         }
-        for(const auto& material:result.geometry.materials)if(material.textured) {
-            if(std::none_of(result.textures.begin(),result.textures.end(),[&](const auto& t){return t.name==material.texture_name;})) {
-                failure.kind=RetailSceneArchiveError::texture_binding;failure.operation="SSF material requires exact decoded texture body name";return {};
+        auto check_geom_mats=[&](const RetailSsfGeometryData& g) {
+            for(const auto& material:g.materials)if(material.textured) {
+                if(std::none_of(result.textures.begin(),result.textures.end(),[&](const auto& t){return t.name==material.texture_name;})) {
+                    failure.kind=RetailSceneArchiveError::texture_binding;failure.operation="SSF material requires exact decoded texture body name";return false;
+                }
             }
-        }
+            return true;
+        };
+        if(!check_geom_mats(result.geometry))return {};
+        for(const auto& eg:result.extra_geometries)if(!check_geom_mats(eg))return {};
+        auto is_tex_used=[&](const RetailSsfTextureData& tex) {
+            auto used_in=[&](const RetailSsfGeometryData& g) {
+                return std::any_of(g.materials.begin(),g.materials.end(),[&](const auto& m){return m.textured&&m.texture_name==tex.name;});
+            };
+            return used_in(result.geometry)||std::any_of(result.extra_geometries.begin(),result.extra_geometries.end(),used_in);
+        };
         for(const auto& texture:result.textures) {
-            if(std::none_of(result.geometry.materials.begin(),result.geometry.materials.end(),[&](const auto& m){return m.textured&&m.texture_name==texture.name;})) {
+            if(!is_tex_used(texture)) {
                 failure.kind=RetailSceneArchiveError::texture_binding;failure.operation="SSF explicit texture is not referenced by selected geometry";return {};
             }
         }
@@ -257,42 +275,42 @@ std::optional<RetailDecodedSsfScene> load_retail_ssf_scene_from_archive(
             failure.kind=RetailSceneArchiveError::resource_owner;failure.operation=failure.renderer.operation;return {};
         }
         auto decoded=decode_retail_ssf_scene_from_archive(volume,config,failure);if(!decoded)return {};
-        const auto& data=decoded->geometry;
-        if(config.render_policy==RetailSsfSceneRenderPolicy::diagnostic_unlit_raw_rgba8) {
-            if(data.atomic_flags!=5||data.atomic_plugin_words[2]||data.atomic_plugin_words[3]||
-                data.materials.size()>std::numeric_limits<std::uint64_t>::max()-base_object_id) {
-                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic atomic policy or object ID extent unsupported";return {};
+        std::vector<const RetailSsfGeometryData*> all_geoms;
+        all_geoms.reserve(1+decoded->extra_geometries.size());
+        all_geoms.push_back(&decoded->geometry);
+        for(const auto& eg:decoded->extra_geometries)all_geoms.push_back(&eg);
+        std::size_t total_materials=0,total_frames=0;
+        for(const auto* gp:all_geoms) {
+            const auto& data=*gp;
+            if(data.materials.size()>std::numeric_limits<std::uint64_t>::max()-base_object_id-total_materials) {
+                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic object ID extent unsupported";return {};
             }
-            constexpr std::array<std::uint32_t,7> plain_material{5,0,0,0xffffffffu,0,0,0};
-            for(const auto& m:data.materials)if(m.plugin_words!=plain_material||!m.mask_name.empty()||m.flags) {
-                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic preview supports only plain version-5 material metadata and no mask";return {};
+            total_materials+=data.materials.size();
+            if(config.render_policy==RetailSsfSceneRenderPolicy::diagnostic_unlit_raw_rgba8) {
+                if(data.atomic_flags!=5||data.atomic_plugin_words[2]||data.atomic_plugin_words[3]) {
+                    failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic atomic policy or object ID extent unsupported";return {};
+                }
+                constexpr std::array<std::uint32_t,7> plain_material{5,0,0,0xffffffffu,0,0,0};
+                for(const auto& m:data.materials)if(m.plugin_words!=plain_material||!m.mask_name.empty()||m.flags) {
+                    failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic preview supports only plain version-5 material metadata and no mask";return {};
+                }
+            } else {
+                if(!data.is_native_ps2_vif||data.atomic_flags!=5) {
+                    failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF native VIF diagnostic atomic policy or object ID extent unsupported";return {};
+                }
+                for(const auto& m:data.materials)if((m.plugin_words[0]!=5u&&m.plugin_words[0]!=0x80000005u)||!m.mask_name.empty()) {
+                    failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF native VIF diagnostic preview supports only version-5 material metadata and no mask";return {};
+                }
             }
-        } else {
-            if(!data.is_native_ps2_vif||data.atomic_flags!=5||
-                data.materials.size()>std::numeric_limits<std::uint64_t>::max()-base_object_id) {
-                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF native VIF diagnostic atomic policy or object ID extent unsupported";return {};
-            }
-            for(const auto& m:data.materials)if(m.plugin_words[0]!=5||!m.mask_name.empty()||m.flags) {
-                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF native VIF diagnostic preview supports only version-5 material metadata and no mask";return {};
-            }
+            for(auto i=std::int64_t(data.frame_index);i>=0;i=data.frames[std::size_t(i)].parent)++total_frames;
         }
         for(const auto& t:decoded->textures)if(t.sampler_metadata!=0x1102||!t.width||!t.height||
             t.width>std::uint32_t(std::numeric_limits<std::int32_t>::max())||t.height>std::uint32_t(std::numeric_limits<std::int32_t>::max())||
             std::uint64_t(t.width)*t.height*4!=t.rgba_raw_alpha.size()) {
             failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic texture extent or source sampler unsupported";return {};
         }
-        std::vector<std::size_t> ancestry;
-        for(auto i=std::int64_t(data.frame_index);i>=0;i=data.frames[std::size_t(i)].parent)ancestry.push_back(std::size_t(i));
-        std::reverse(ancestry.begin(),ancestry.end());
-        std::vector<std::vector<RetailWorldTriangleVertex>> groups(data.materials.size());
-        for(const auto& triangle:data.triangles)for(const auto index:triangle.vertices) {
-            const auto& source=data.vertices[index];RetailWorldTriangleVertex vertex;
-            vertex.position=source.position;vertex.normal=source.normal;vertex.u=source.uv[0];vertex.v=source.uv[1];
-            for(unsigned c=0;c<4;++c)vertex.color[c]=data.has_colors?source.stored_color[c]/255.0f:1.0f;
-            groups[triangle.material].push_back(vertex);
-        }
         resources.rasters.reserve(decoded->textures.size());resources.textures.reserve(decoded->textures.size());
-        resources.materials.reserve(data.materials.size());resources.frames.reserve(ancestry.size());resources.scene_objects.reserve(groups.size());
+        resources.materials.reserve(total_materials);resources.frames.reserve(total_frames);resources.scene_objects.reserve(total_materials);
         std::vector<NativeRetailTextureHandle> texture_handles;texture_handles.reserve(decoded->textures.size());
         for(const auto& t:decoded->textures) {
             RetailRendererTextureDescription desc{t.name,"",RetailRendererTextureFilter::linear,RetailRendererTextureAddress::wrap,RetailRendererTextureAddress::wrap};
@@ -312,42 +330,57 @@ std::optional<RetailDecodedSsfScene> load_retail_ssf_scene_from_archive(
             if(!texture){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=tf.operation;return {};}
             resources.textures.push_back(*texture);texture_handles.push_back(*texture);
         }
-        std::vector<NativeRetailMaterialHandle> material_handles;material_handles.reserve(data.materials.size());
-        for(const auto& m:data.materials) {
-            RetailRendererMaterialFailure mf;auto material=materials.create_material(mf);
-            if(!material){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=mf.operation;return {};}
-            resources.materials.push_back(*material);material_handles.push_back(*material);
-            const auto& c=m.stored_color;
-            if(!materials.set_color(*material,{c[0],c[1],c[2],c[3]},mf)||
-                !materials.set_surface_properties(*material,{m.surface[0],m.surface[1],m.surface[2]},mf)) {
-                failure.kind=RetailSceneArchiveError::ingestion;failure.operation=mf.operation;return {};
-            }
-            if(m.textured) {
-                const auto t=std::find_if(decoded->textures.begin(),decoded->textures.end(),[&](const auto& x){return x.name==m.texture_name;});
-                const auto index=std::size_t(t-decoded->textures.begin());
-                if(!materials.set_texture(*material,texture_handles[index],mf)){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=mf.operation;return {};}
-            }
-        }
-        NativeRetailRendererFrameHandle selected_frame=parent_frame;
         const RetailRendererAffine identity{{1,0,0},{0,1,0},{0,0,1},{0,0,0}};
-        for(const auto index:ancestry) {
-            RetailRendererFrameFailure ff;auto frame=frames.create_base_frame(ff);
-            if(!frame){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=ff.operation;return {};}
-            resources.frames.push_back(*frame);const auto& affine=data.frames[index].modelling;
-            const auto properties=affine==identity?NativeRetailRendererMatrixDomain::identity_shortcut_mask:0u;
-            if(!frames.set_modelling(*frame,{affine,properties},ff)||(!selected_frame.empty()&&!frames.add_child(selected_frame,*frame,ff))) {
-                failure.kind=RetailSceneArchiveError::ingestion;failure.operation=ff.operation;return {};
+        std::uint64_t running_object_id=base_object_id;
+        for(const auto* gp:all_geoms) {
+            const auto& data=*gp;
+            std::vector<std::size_t> ancestry;
+            for(auto i=std::int64_t(data.frame_index);i>=0;i=data.frames[std::size_t(i)].parent)ancestry.push_back(std::size_t(i));
+            std::reverse(ancestry.begin(),ancestry.end());
+            std::vector<std::vector<RetailWorldTriangleVertex>> groups(data.materials.size());
+            for(const auto& triangle:data.triangles)for(const auto index:triangle.vertices) {
+                const auto& source=data.vertices[index];RetailWorldTriangleVertex vertex;
+                vertex.position=source.position;vertex.normal=source.normal;vertex.u=source.uv[0];vertex.v=source.uv[1];
+                for(unsigned c=0;c<4;++c)vertex.color[c]=data.has_colors?source.stored_color[c]/255.0f:1.0f;
+                groups[triangle.material].push_back(vertex);
             }
-            selected_frame=*frame;
-        }
-        for(std::size_t i=0;i<groups.size();++i)if(!groups[i].empty()) {
-            RetailWorldSceneObject object;object.id=base_object_id+i;object.frame=selected_frame;
-            object.local_center=data.bound_center;object.bounding_radius=data.bound_radius;object.material=material_handles[i];
-            object.triangles=std::move(groups[i]);object.diagnostic_unlit_raw_rgba8=true;
-            // Explicit opaque native preview; source effect/blend policy is not inferred.
-            object.alpha_blended=false;
-            if(!world.add_scene_object(std::move(object),failure.renderer)){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=failure.renderer.operation;return {};}
-            resources.scene_objects.push_back(base_object_id+i);
+            std::vector<NativeRetailMaterialHandle> material_handles;material_handles.reserve(data.materials.size());
+            for(const auto& m:data.materials) {
+                RetailRendererMaterialFailure mf;auto material=materials.create_material(mf);
+                if(!material){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=mf.operation;return {};}
+                resources.materials.push_back(*material);material_handles.push_back(*material);
+                const auto& c=m.stored_color;
+                if(!materials.set_color(*material,{c[0],c[1],c[2],c[3]},mf)||
+                    !materials.set_surface_properties(*material,{m.surface[0],m.surface[1],m.surface[2]},mf)) {
+                    failure.kind=RetailSceneArchiveError::ingestion;failure.operation=mf.operation;return {};
+                }
+                if(m.textured) {
+                    const auto t=std::find_if(decoded->textures.begin(),decoded->textures.end(),[&](const auto& x){return x.name==m.texture_name;});
+                    const auto index=std::size_t(t-decoded->textures.begin());
+                    if(!materials.set_texture(*material,texture_handles[index],mf)){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=mf.operation;return {};}
+                }
+            }
+            NativeRetailRendererFrameHandle selected_frame=parent_frame;
+            for(const auto index:ancestry) {
+                RetailRendererFrameFailure ff;auto frame=frames.create_base_frame(ff);
+                if(!frame){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=ff.operation;return {};}
+                resources.frames.push_back(*frame);const auto& affine=data.frames[index].modelling;
+                const auto properties=affine==identity?NativeRetailRendererMatrixDomain::identity_shortcut_mask:0u;
+                if(!frames.set_modelling(*frame,{affine,properties},ff)||(!selected_frame.empty()&&!frames.add_child(selected_frame,*frame,ff))) {
+                    failure.kind=RetailSceneArchiveError::ingestion;failure.operation=ff.operation;return {};
+                }
+                selected_frame=*frame;
+            }
+            for(std::size_t i=0;i<groups.size();++i)if(!groups[i].empty()) {
+                RetailWorldSceneObject object;object.id=running_object_id+i;object.frame=selected_frame;
+                object.local_center=data.bound_center;object.bounding_radius=data.bound_radius;object.material=material_handles[i];
+                object.triangles=std::move(groups[i]);object.diagnostic_unlit_raw_rgba8=true;
+                // Explicit opaque native preview; source effect/blend policy is not inferred.
+                object.alpha_blended=false;
+                if(!world.add_scene_object(std::move(object),failure.renderer)){failure.kind=RetailSceneArchiveError::ingestion;failure.operation=failure.renderer.operation;return {};}
+                resources.scene_objects.push_back(running_object_id+i);
+            }
+            running_object_id+=groups.size();
         }
         committed=true;return decoded;
     } catch(const std::bad_alloc&){failure.kind=RetailSceneArchiveError::allocation;failure.operation="SSF scene native owner allocation";}

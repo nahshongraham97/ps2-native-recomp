@@ -89,10 +89,19 @@ struct Reader {
         }
         need(parts.size()==index+1 && parts[index].id==3,RetailSsfGeometryError::material,"SSF material extension partition",c.at);
         const auto ext=children(parts[index].begin,parts[index].end);
-        need(ext.size()==1,RetailSsfGeometryError::unsupported_plugin,"SSF material unknown extension",parts[index].at);
-        shape(ext[0],0x895303,28,"SSF material version-5 plain extension extent");
+        need(ext.size()==1&&ext[0].id==0x895303,RetailSsfGeometryError::unsupported_plugin,"SSF material unknown extension",parts[index].at);
+        const auto ext_size=ext[0].end-ext[0].begin;
+        need(ext_size>=28,RetailSsfGeometryError::chunk,"SSF material version-5 extension extent",ext[0].at);
         for(unsigned i=0;i<7;++i)result.plugin_words[i]=word(ext[0].begin+i*4);
-        need(result.plugin_words[0]==5,RetailSsfGeometryError::unsupported_plugin,"SSF material unsupported extension version or flags",ext[0].begin);
+        if(result.plugin_words[0]==5u) {
+            need(ext_size==28,RetailSsfGeometryError::chunk,"SSF material version-5 plain extension extent",ext[0].at);
+        } else if(result.plugin_words[0]==0x80000005u) {
+            need(ext_size==44,RetailSsfGeometryError::chunk,"SSF material version-5 extended vec4 extent",ext[0].at);
+            for(unsigned i=0;i<4;++i)result.material_ext_vec4[i]=scalar(ext[0].begin+28+i*4);
+            result.has_material_ext_vec4=true;
+        } else {
+            reject(RetailSsfGeometryError::unsupported_plugin,"SSF material unsupported extension version or flags",ext[0].begin);
+        }
         return result;
     }
 };
@@ -122,8 +131,17 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
             RetailSsfGeometryError::frame,"SSF exact frame list and extension counts",frame_chunks[0].at);
         result.frames.reserve(frame_count);
         for(std::size_t i=0;i<frame_count;++i) {
-            r.shape(frame_chunks[i+1],3,0,"SSF frame plugin remains unsupported");
+            const auto& fc=frame_chunks[i+1];
+            r.need(fc.id==3,RetailSsfGeometryError::chunk,"SSF frame extension chunk type",fc.at);
             const auto p=frame_chunks[0].begin+4+i*56;RetailSsfGeometryFrame frame;
+            if(fc.end>fc.begin) {
+                const auto fext=r.children(fc.begin,fc.end);
+                r.need(fext.size()==1&&fext[0].id==0x11eu,RetailSsfGeometryError::unsupported_plugin,"SSF frame plugin remains unsupported",fc.at);
+                r.need(fext[0].end-fext[0].begin>=8,RetailSsfGeometryError::unsupported_plugin,"SSF frame HAnim extension extent",fext[0].at);
+                r.need(r.word(fext[0].begin)==0x100u,RetailSsfGeometryError::unsupported_plugin,"SSF frame HAnim unsupported version",fext[0].begin);
+                frame.hanim_node_id=r.word(fext[0].begin+4);
+                if(fext[0].end-fext[0].begin>=16)frame.hanim_flags=r.word(fext[0].begin+12);
+            }
             float v[12];for(unsigned j=0;j<12;++j)v[j]=r.scalar(p+j*4);
             frame.modelling={{v[0],v[1],v[2]},{v[3],v[4],v[5]},{v[6],v[7],v[8]},{v[9],v[10],v[11]}};
             frame.parent=std::bit_cast<std::int32_t>(r.word(p+48));frame.flags=r.word(p+52);
@@ -203,6 +221,7 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
             const auto ex_end=ssf_geometry_detail::bounded_chunk_end(ep,ex_len,geometry.end);
             r.need(bool(ex_end)&&ex_id==3,RetailSsfGeometryError::unsupported_plugin,"SSF native extension bounds",ep);
             const auto ext=r.children(ep+12,*ex_end);
+            for(const auto& e:ext)if(e.id==0x116u)r.reject(RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native geometry RpSkin extension unsupported",e.at);
             r.need(ext.size()==1&&ext[0].id==0x50e,RetailSsfGeometryError::unsupported_plugin,"SSF native geometry requires rwID_BINMESHPLG",ep);
             const auto& bm=ext[0];
             r.need(bm.end-bm.begin>=12,RetailSsfGeometryError::topology,"SSF native binmesh header",bm.at);
@@ -305,17 +324,19 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                             const std::size_t dp_off=vp+4;
                             if(vnvl==0x6cu&&usn==0&&addr==0x000u) {
                                 // Bounding sphere per batch
+                            } else if(vnvl==0x6du&&usn==1&&addr==0x002u&&cl==1u) {
+                                // V4_16 VU1 strip-kick descriptor table preceding vertex batch
                             } else if(vnvl==0x6eu&&usn==1&&addr==0x001u&&cl==1u) {
                                 const std::size_t bcount=std::to_integer<std::size_t>(bytes[dp_off]);
                                 r.need(bcount>0,RetailSsfGeometryError::vif_bounds,"SSF native VIF batch vertex count zero",vp);
                                 batch.assign(bcount,BatchVertex{});
-                            } else if(vnvl==0x68u&&usn==0&&(addr==0x011u||addr==0x002u)) {
+                            } else if(vnvl==0x68u&&usn==0&&(addr==0x011u||addr==0x002u||addr==0x000u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF position count mismatch",vp);
                                 for(std::size_t vi=0;vi<num;++vi) {
                                     batch[vi].v.position={r.scalar(dp_off+vi*12),r.scalar(dp_off+vi*12+4),r.scalar(dp_off+vi*12+8)};
                                     batch[vi].has_pos=true;
                                 }
-                            } else if(vnvl==0x6au&&usn==0&&(addr==0x012u||addr==0x003u)) {
+                            } else if(vnvl==0x6au&&usn==0&&(addr==0x012u||addr==0x003u||addr==0x002u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF normal count mismatch",vp);
                                 for(std::size_t vi=0;vi<num;++vi) {
                                     const auto sx=static_cast<std::int8_t>(std::to_integer<std::uint8_t>(bytes[dp_off+vi*3+0]));
@@ -323,21 +344,23 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                                     const auto sz=static_cast<std::int8_t>(std::to_integer<std::uint8_t>(bytes[dp_off+vi*3+2]));
                                     batch[vi].v.normal={float(sx)/127.0f,float(sy)/127.0f,float(sz)/127.0f};
                                 }
-                            } else if(vnvl==0x64u&&usn==0&&(addr==0x013u||addr==0x004u)) {
+                            } else if(vnvl==0x64u&&usn==0&&(addr==0x013u||addr==0x004u||addr==0x001u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF UV count mismatch",vp);
                                 for(std::size_t vi=0;vi<num;++vi) {
                                     batch[vi].v.uv={r.scalar(dp_off+vi*8),r.scalar(dp_off+vi*8+4)};
                                 }
                             } else if(vnvl==0x66u&&usn==1&&(addr==0x013u||addr==0x004u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF UV16 count mismatch",vp);
-                            } else if(vnvl==0x6eu&&usn==1&&addr==0x014u) {
+                            } else if(vnvl==0x6eu&&((usn==1&&(addr==0x014u||addr==0x002u||addr==0x005u))||((cl==3u||cl==4u)&&addr==0x001u))) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF color count mismatch",vp);
                                 for(std::size_t vi=0;vi<num;++vi) {
                                     for(unsigned c=0;c<4;++c)batch[vi].v.stored_color[c]=std::to_integer<std::uint8_t>(bytes[dp_off+vi*4+c]);
                                 }
-                            } else if(vnvl==0x61u&&(addr==0x011u||addr==0x012u||addr==0x002u||addr==0x003u)) {
+                            } else if(vnvl==0x6cu&&usn==0&&addr==0x004u&&(cl==3u||cl==4u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF cl3/4 vec4 count mismatch",vp);
+                            } else if(vnvl==0x61u&&(addr==0x011u||addr==0x012u||addr==0x002u||addr==0x003u||addr==0x000u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF ADC count mismatch",vp);
-                                if(addr==0x011u||addr==0x002u) {
+                                if(addr==0x011u||addr==0x002u||addr==0x000u) {
                                     for(std::size_t vi=0;vi<num;++vi)batch[vi].adc=(r.half(dp_off+vi*2)&0x8000u)!=0;
                                 }
                             } else {

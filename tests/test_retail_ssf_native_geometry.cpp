@@ -278,6 +278,105 @@ void run_unit_tests() {
         check(!decode_retail_ssf_geometry(clump, {0, 0, 0}, f) && f.kind == RetailSsfGeometryError::vif_bounds,
               "truncated UNPACK payload rejected fail-closed");
     }
+    // 8. 0x6d V4_16 (usn=1, addr=0x002, cl=1) strip-kick descriptor UNPACK + 0x80000005 mat ext + 0x11e HAnim frame ext.
+    {
+        std::vector<std::byte> vif;
+        push_u32(vif, 0x05000000u); // STMOD
+        push_u32(vif, 0x01000101u); // STCYCL 1,1
+        push_u32(vif, 0x6d01c002u); // V4_16 usn=1 num=1 addr=0x002
+        push_u32(vif, 0u); push_u32(vif, 0u);
+        push_u32(vif, 0x6e01c001u); // batch count=3
+        push_u32(vif, 3u);
+        push_u32(vif, 0x01000104u); // STCYCL 4,1
+        push_u32(vif, 0x68038011u); // V3_32 num=3 addr=0x011
+        for (int i = 0; i < 3; ++i) { push_f32(vif, float(i)); push_f32(vif, float(i & 1)); push_f32(vif, 0.0f); }
+        push_u32(vif, 0x14000000u); // MSCAL 0
+        while (vif.size() % 16 != 8) push_u32(vif, 0);
+        std::vector<std::byte> pkt;
+        const std::uint32_t qwc = static_cast<std::uint32_t>((vif.size() + 8) / 16 - 1);
+        push_u32(pkt, (6u << 28) | qwc); push_u32(pkt, 0); push_u32(pkt, 0); push_u32(pkt, 0);
+        pkt.insert(pkt.end(), vif.begin(), vif.end());
+        auto clump = make_synthetic_native_clump(pkt, 0, 3, 1);
+        auto dec = decode_retail_ssf_geometry(clump, {0, 0, 0}, f);
+        check(dec && dec->is_native_ps2_vif && dec->triangles.size() == 1,
+              "0x6d V4_16 cl=1 addr=0x002 decoded cleanly");
+    }
+    // 9. Material 0x895303 with 0x80000005 (44-byte) and Frame 0x11e HAnim extension.
+    {
+        std::vector<std::byte> vif;
+        push_u32(vif, 0x01000101u);
+        push_u32(vif, 0x6e01c001u); push_u32(vif, 3u);
+        push_u32(vif, 0x01000104u);
+        push_u32(vif, 0x68038011u);
+        for (int i = 0; i < 3; ++i) { push_f32(vif, float(i)); push_f32(vif, float(i & 1)); push_f32(vif, 0.0f); }
+        push_u32(vif, 0x14000000u);
+        while (vif.size() % 16 != 8) push_u32(vif, 0);
+        std::vector<std::byte> pkt;
+        const std::uint32_t qwc = static_cast<std::uint32_t>((vif.size() + 8) / 16 - 1);
+        push_u32(pkt, (6u << 28) | qwc); push_u32(pkt, 0); push_u32(pkt, 0); push_u32(pkt, 0);
+        pkt.insert(pkt.end(), vif.begin(), vif.end());
+
+        // Build custom clump with 0x11e frame ext + 0x80000005 44-byte material ext
+        auto clump = make_synthetic_native_clump(pkt, 0, 3, 1);
+        // Quick direct test on patched clump isn't trivial, so build minimal clump:
+        std::vector<std::byte> cs; push_u32(cs, 1); push_u32(cs, 0); push_u32(cs, 0);
+        std::vector<std::byte> fs; push_u32(fs, 1);
+        for (int i = 0; i < 12; ++i) push_f32(fs, (i == 0 || i == 4 || i == 8) ? 1.0f : 0.0f);
+        push_u32(fs, 0xffffffffu); push_u32(fs, 0);
+        std::vector<std::byte> hanim;
+        push_u32(hanim, 0x100u); push_u32(hanim, 42u); push_u32(hanim, 0u); push_u32(hanim, 0x7u);
+        auto fl_body = rw_chunk(1, fs);
+        auto fext = rw_chunk(3, rw_chunk(0x11eu, hanim));
+        fl_body.insert(fl_body.end(), fext.begin(), fext.end());
+        auto flist = rw_chunk(14, fl_body);
+
+        std::vector<std::byte> gs;
+        push_u32(gs, 0x01000009u); push_u32(gs, 1); push_u32(gs, 3); push_u32(gs, 1);
+        push_f32(gs, 0); push_f32(gs, 0); push_f32(gs, 0); push_f32(gs, 10.0f);
+        push_u32(gs, 0); push_u32(gs, 0);
+        std::vector<std::byte> gbody = rw_chunk(1, gs);
+        std::vector<std::byte> mls; push_u32(mls, 1); push_u32(mls, 0xffffffffu);
+        std::vector<std::byte> ms; push_u32(ms, 0); push_u32(ms, 0xffffffffu); push_u32(ms, 0); push_u32(ms, 0);
+        push_f32(ms, 1.0f); push_f32(ms, 0.0f); push_f32(ms, 1.0f);
+        std::vector<std::byte> mp = rw_chunk(1, ms);
+        std::vector<std::byte> mext_data;
+        push_u32(mext_data, 0x80000005u);
+        for (int i = 0; i < 6; ++i) push_u32(mext_data, i == 2 ? 0xffffffffu : 0u);
+        push_f32(mext_data, 0.25f); push_f32(mext_data, 0.5f); push_f32(mext_data, 0.75f); push_f32(mext_data, 1.0f);
+        auto mext = rw_chunk(3, rw_chunk(0x895303u, mext_data));
+        mp.insert(mp.end(), mext.begin(), mext.end());
+        auto mlist_body = rw_chunk(1, mls);
+        auto mat = rw_chunk(7, mp);
+        mlist_body.insert(mlist_body.end(), mat.begin(), mat.end());
+        auto mlist = rw_chunk(8, mlist_body);
+        gbody.insert(gbody.end(), mlist.begin(), mlist.end());
+        std::vector<std::byte> bm; push_u32(bm, 1); push_u32(bm, 1); push_u32(bm, 3); push_u32(bm, 3); push_u32(bm, 0);
+        auto gext = rw_chunk(3, rw_chunk(0x50eu, bm));
+        gbody.insert(gbody.end(), gext.begin(), gext.end());
+        push_u32(gbody, static_cast<std::uint32_t>(pkt.size())); push_u32(gbody, 1);
+        gbody.insert(gbody.end(), pkt.begin(), pkt.end());
+        auto geom = rw_chunk(15, gbody);
+        std::vector<std::byte> gl_hdr; push_u32(gl_hdr, 1);
+        auto gl_body = rw_chunk(1, gl_hdr); gl_body.insert(gl_body.end(), geom.begin(), geom.end());
+        auto glist = rw_chunk(26, gl_body);
+        std::vector<std::byte> as; push_u32(as, 0); push_u32(as, 0); push_u32(as, 5); push_u32(as, 0);
+        std::vector<std::byte> ae; push_u32(ae, 3); push_u32(ae, 0); push_u32(ae, 0); push_u32(ae, 0);
+        auto abody = rw_chunk(1, as); auto aext = rw_chunk(3, rw_chunk(0x895302u, ae));
+        abody.insert(abody.end(), aext.begin(), aext.end());
+        auto atomic = rw_chunk(20, abody);
+        std::vector<std::byte> cb = rw_chunk(1, cs);
+        cb.insert(cb.end(), flist.begin(), flist.end());
+        cb.insert(cb.end(), glist.begin(), glist.end());
+        cb.insert(cb.end(), atomic.begin(), atomic.end());
+        auto cext = rw_chunk(3, {}); cb.insert(cb.end(), cext.begin(), cext.end());
+        auto c2 = rw_chunk(16, cb);
+        auto dec2 = decode_retail_ssf_geometry(c2, {0, 0, 0}, f);
+        check(dec2 && dec2->frames.size() == 1 && dec2->frames[0].hanim_node_id == 42u &&
+              dec2->frames[0].hanim_flags == 0x7u &&
+              dec2->materials.size() == 1 && dec2->materials[0].has_material_ext_vec4 &&
+              dec2->materials[0].material_ext_vec4[0] == 0.25f && dec2->materials[0].material_ext_vec4[3] == 1.0f,
+              "0x80000005 44-byte material ext + 0x11e HAnim frame ext decoded cleanly");
+    }
 }
 
 struct Fixture {
@@ -521,6 +620,106 @@ int main(int argc, char** argv) try {
               "125D60 reset deleted GL texture with zero leaks/errors");
         auto re_after = main_binding::retail_render_enabled(*x.main_state, sf);
         check(re_after && !*re_after, "retail_render_enabled false after 125D60 reset");
+    }
+
+    // 3. Multi-atomic Armory BACKGROUND GPU path (atomics 18, 69, 0 + 4 textures 32, 41, 49, 31) through 225D40 -> Main -> 125D60
+    {
+        Fixture x(original);
+        x.main_state->scene = std::make_shared<NativeRetailSceneOwners>();
+        x.main_state->scene->config.viewport_width = 64;
+        x.main_state->scene->config.viewport_height = 48;
+        x.main_state->scene->config.near_clip = 0.01f;
+        x.main_state->scene->config.far_clip = 2000.0f;
+        x.main_state->scene->config.display = display;
+        x.main_state->scene->config.call_show_raster = false;
+
+        RetailSsfSceneSelection sel;
+        sel.archive_resource_key = "mkda.pak";
+        sel.member.index = 0;
+        sel.section_index = 0;
+        sel.clump_resource.name = "BACKGROUND";
+        sel.atomic_index = 18;
+        sel.extra_atomic_indices = {69, 72};
+        sel.morph_index = 0;
+        sel.texture_resource_indices = {32, 41, 49};
+        sel.render_policy = RetailSsfSceneRenderPolicy::diagnostic_native_vif_unlit_raw_rgba8;
+        x.main_state->scene->config.ssf_scene = sel;
+
+        StartupFailure sf;
+        auto gate = scene_bootstrap_required::continue_first_scene_at_225d40(*x.main_state, x.renderer, sf);
+        if (gate != RetailStartupGate::ready) {
+            std::fprintf(stderr, "Armory multi-atomic 225D40 failed: %s\n", sf.operation ? sf.operation : "(null)");
+        }
+        check(gate == RetailStartupGate::ready && x.main_state->scene->scene_loaded &&
+              x.main_state->scene->ssf_data.has_value() &&
+              x.main_state->scene->ssf_data->extra_geometries.size() == 2 &&
+              x.main_state->scene->ssf_data->textures.size() == 3,
+              "225D40 loaded multi-atomic Armory BACKGROUND with 3 atomics and 3 textures");
+
+        const auto& g = x.main_state->scene->ssf_data->geometry;
+        RetailRendererPoint3 world_center = g.bound_center;
+        for (std::int32_t fi = static_cast<std::int32_t>(g.frame_index);
+             fi >= 0 && static_cast<std::size_t>(fi) < g.frames.size();
+             fi = g.frames[static_cast<std::size_t>(fi)].parent) {
+            const auto& m = g.frames[static_cast<std::size_t>(fi)].modelling;
+            world_center = {
+                m.right.x * world_center.x + m.up.x * world_center.y + m.at.x * world_center.z + m.translation.x,
+                m.right.y * world_center.x + m.up.y * world_center.y + m.at.y * world_center.z + m.translation.y,
+                m.right.z * world_center.x + m.up.z * world_center.y + m.at.z * world_center.z + m.translation.z
+            };
+        }
+        const float dist = std::max(0.5f, g.bound_radius * 1.5f);
+        RetailRendererFrameFailure ff;
+        RetailRendererMatrixValue cam_mod{
+            {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {world_center.x, world_center.y, world_center.z - dist}},
+            0x20000u};
+        check(x.main_state->scene->frames->set_modelling(x.main_state->scene->camera_init->primary.frame, cam_mod, ff),
+              "position camera facing Armory BACKGROUND multi-atomic");
+
+        auto re = main_binding::retail_render_enabled(*x.main_state, sf);
+        check(re && *re && main_binding::render_retail_frame(*x.main_state, sf),
+              "render_retail_frame dispatched multi-atomic Armory BACKGROUND");
+
+        const auto& cache = x.main_state->scene->world->gpu_texture_cache();
+        check(cache.size() == 3, "multi-atomic Armory uploaded 3 distinct textures to GPU");
+        std::vector<GLuint> tex_ids;
+        for (const auto& entry : cache) {
+            check(entry.ready && glIsTexture(static_cast<GLuint>(entry.gl_texture_id)) == GL_TRUE,
+                  "multi-atomic Armory GPU texture ready and live");
+            tex_ids.push_back(static_cast<GLuint>(entry.gl_texture_id));
+        }
+
+        RetailRendererCameraFailure rcf;
+        check(x.main_state->scene->cameras->begin_update(x.main_state->scene->camera_init->primary.camera, rcf),
+              "rebind multi-atomic Armory FBO for readback");
+        std::vector<std::uint8_t> rgba(64 * 48 * 4);
+        std::vector<float> depths(64 * 48);
+        glReadPixels(0, 0, 64, 48, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
+        glReadPixels(0, 0, 64, 48, GL_DEPTH_COMPONENT, GL_FLOAT, depths.data());
+        display->record_diagnostic_readback(3);
+        check(x.main_state->scene->cameras->end_update(x.main_state->scene->camera_init->primary.camera, rcf),
+              "end multi-atomic Armory FBO readback");
+
+        std::size_t drawn_pixels = 0;
+        for (std::size_t i = 0; i < 64 * 48; ++i) {
+            if (depths[i] < 0.9999f && (rgba[i * 4 + 0] != 13 || rgba[i * 4 + 1] != 20 || rgba[i * 4 + 2] != 36)) {
+                ++drawn_pixels;
+            }
+        }
+        std::printf("ARMORY_MULTI_GPU_PIXELS drawn=%zu textures=%zu scene_objects=%zu\n",
+                    drawn_pixels, cache.size(), x.main_state->scene->world->scene_objects().size());
+        check(drawn_pixels > 0, "multi-atomic Armory rendered non-background depth-written pixels");
+
+        check(scene_bootstrap_required::continue_scene_reset_at_125d60(*x.main_state, sf),
+              "125D60 reset succeeded for multi-atomic Armory");
+        check((!x.main_state->scene || (!x.main_state->scene->scene_loaded && !x.main_state->scene->world)) &&
+              glGetError() == GL_NO_ERROR,
+              "125D60 tore down multi-atomic Armory scene and GPU cache with zero errors");
+        for (GLuint tid : tex_ids) {
+            check(glIsTexture(tid) == GL_FALSE, "125D60 deleted every multi-atomic Armory GL texture");
+        }
+        auto re_after = main_binding::retail_render_enabled(*x.main_state, sf);
+        check(re_after && !*re_after, "retail_render_enabled false after multi-atomic 125D60 reset");
     }
     (void)display->release_context(df);
 #endif

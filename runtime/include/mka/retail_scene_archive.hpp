@@ -58,11 +58,13 @@ struct RetailSsfSceneSelection {
     std::size_t section_index{};
     RetailArchiveMemberSelector clump_resource;
     std::size_t atomic_index{}, morph_index{};
+    std::vector<std::size_t> extra_atomic_indices;
     std::vector<std::size_t> texture_resource_indices;
     RetailSsfSceneRenderPolicy render_policy{RetailSsfSceneRenderPolicy::unbound_retail};
 };
 struct RetailDecodedSsfScene {
     RetailSsfGeometryData geometry;
+    std::vector<RetailSsfGeometryData> extra_geometries;
     std::vector<RetailSsfTextureData> textures;
     // Bounded selected record extents supplied to admission/decoding, including
     // source wrappers and opaque record padding. This is not a file IO receipt
